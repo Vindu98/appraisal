@@ -1,0 +1,123 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    
+    <record model="ir.ui.view" id="hr_appraisal.list">
+      <field name="name">hr_appraisal list</field>
+      <field name="model">hr.hr_appraisal</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="employee"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id= "hr_apprisal_form_view" model= "ir.ui.view">
+      <field name="model">hr.hr_appraisal</field >
+      <field name="arch" type= "xml">
+        <form> 
+          <group>
+             <field name="employee" groups="hr.group_hr_manager"/>
+          </group>
+
+          <notebook>
+            <page name="targets" string="Target wise result">
+              <field name="target_ids" widget="one2many_list">
+                <tree editable="bottom">
+                  <field name="target" attrs="{'readonly':True}"/>
+                    <!-- <field name="completed" attrs="{'readonly':True}"/> -->
+                  <field name="completed"/>
+                  <field name="performance_rating" />
+                  <field name="quality_rating" />
+                  <field name="deadline_meeting_rating" />
+                  <field name="comments"/>
+                </tree>
+              </field>
+            </page>
+          </notebook>
+        </form>         
+      </field>
+    </record>
+
+    <record id="view_employee_readonly" model="ir.ui.view">
+        <field name="name">hr.appraisal_employee</field>
+        <field name="model">hr.hr_appraisal</field>
+        <field name="inherit_id" ref="hr_appraisal.hr_apprisal_form_view" />
+        <field name="groups_id" eval="[(6, 0, [ref('hr.group_hr_manager')])]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='target']" position="attributes">
+                <attribute name="readonly">False</attribute>
+            </xpath>
+        </field>
+    </record>
+   
+   
+
+    <!-- actions opening views on models -->
+    
+    <!-- Start appraisal process -->
+    <record model="ir.actions.act_window" id="hr_appraisal.scheduler_action_window">
+      <field name="name">Start appraisal process</field>
+      <field name="res_model">hr.hr_appraisal.scheduler</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+      <field name="domain">[('employee.user_id','=', 1)]</field>
+    </record>
+    <record model="ir.actions.act_window" id="hr_appraisal.all_schedules">
+      <field name="name">All appraisal schedules</field>
+      <field name="res_model">hr.hr_appraisal.scheduler</field>
+      <field name="view_mode">tree,form</field>
+      <field name="target">inline</field>
+    </record>
+    <!-- Employee form action -->
+    <record model="ir.actions.act_window" id="hr_appraisal.action_window">
+      <field name="name">Appraisal Form</field>
+      <field name="res_model">hr.hr_appraisal</field>
+      <field name="view_mode">tree,kanban,form</field>
+      <field name="target">current</field>
+      <field name="domain">['|',('employee.user_id', '=', uid),('employee.user_id','=', 1)]</field>
+    </record>
+
+    <!-- Employee's department form action -->
+    <record id="hr_appraisal.department_action_window" model="ir.actions.act_window">
+      <field name="name">Manager's review of employee</field>
+      <field name="res_model">hr.hr_appraisal.company_evaluation</field>
+      <field name="view_mode">tree,kanban,form</field>
+      <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Form to be submitted by employee's department regarding employee's performance.
+              </p>
+      </field>
+    </record>
+   
+
+    <!-- server action to the one above -->
+    
+    
+
+    <!-- groups="base.group_erp_manager" -->
+
+    <!-- Top menu item -->
+    
+    <menuitem name="hr_appraisal" id="hr_appraisal.menu_root" groups="base.group_user"/>
+   
+    <!-- menu categories -->
+
+    <menuitem name="Start appraisal process" id="hr_appraisal.startprocess" parent="hr_appraisal.menu_root" groups="base.group_erp_manager"/>
+    <menuitem name="Employees for appraisal" id="hr_appraisal.menu_1" parent="hr_appraisal.menu_root"/>
+    <menuitem name="Department Manager review" id="hr_appraisal.department1" parent="hr_appraisal.menu_root" groups="hr.group_hr_manager"/>
+    
+   
+    <!-- actions -->
+
+    <menuitem name="Set appraisal start" id="hr_appraisal.initiateprocess" sequence = "1" parent="hr_appraisal.startprocess"
+              action="hr_appraisal.scheduler_action_window" groups="base.group_erp_manager"/>
+    <menuitem name="All appraisal schedules" id="hr_appraisal.all_processes" sequence = "2" parent="hr_appraisal.startprocess"
+              action="hr_appraisal.all_schedules" groups="base.group_erp_manager"/>          
+    <menuitem name="Employee forms" id="hr_appraisal.employee_form_view" sequence = "3" parent="hr_appraisal.menu_1"
+              action="hr_appraisal.action_window"/>
+    <menuitem name="Department review" id="hr_appraisal.department_form_view" sequence = "4" parent="hr_appraisal.department1"
+              action="hr_appraisal.department_action_window"/>          
+    
+  </data>
+</odoo>

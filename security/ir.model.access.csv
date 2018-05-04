@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_hr_appraisal_employee,Group User,model_hr_hr_appraisal,base.group_user,1,1,0,0
+access_hr_hr_appraisal_manager,Group Manager,model_hr_hr_appraisal,hr.group_hr_manager,1,1,1,1
+access_hr_hr_appraisal_targets_employee,Targets for Group User,model_hr_hr_appraisal_targets,base.group_user,1,1,0,0
+access_hr_hr_appraisal_targets_manager,Targets By group Manager,model_hr_hr_appraisal_targets,hr.group_hr_manager,1,1,1,1
